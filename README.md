@@ -11,7 +11,7 @@ Master-Flow layout has been used for tablets to enhance UX.
 Has a homescreen widget to display ingredients for a specific recipe selected by the user.
 ExoPlayer retains state on rotation and after resuming from background. All RecyclerViews also retain their scroll positions.
 
-#LIBRARIES USED
+# LIBRARIES USED
 ButterKnife - Data Binding
 Picasso - Downloading images
 SugarORM - Managing DB

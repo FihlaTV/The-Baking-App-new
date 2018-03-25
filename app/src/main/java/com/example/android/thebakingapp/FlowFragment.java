@@ -61,6 +61,7 @@ public class FlowFragment extends android.support.v4.app.Fragment {
     ArrayList<String> allDesc;
     ArrayList<String> allVid;
     ArrayList<String> allThumb;
+    Boolean clicked;
     int current;
     int currentWindow;
     long playbackPosition;
@@ -89,6 +90,7 @@ public class FlowFragment extends android.support.v4.app.Fragment {
 
         Bundle extras = this.getArguments();
         try {
+            clicked = extras.getBoolean("CLICKED");
             current = extras.getInt("THIS_ID");
             allIDs = extras.getIntegerArrayList("ALL_IDS");
             allDesc = extras.getStringArrayList("ALL_DESC");
@@ -137,6 +139,8 @@ public class FlowFragment extends android.support.v4.app.Fragment {
             @Override
             public void onClick(View view) {
                 if(player!=null){
+                    playbackPosition = 0;
+                    currentWindow = 0;
                     player.stop();
                 }
                 setViews(false);
@@ -148,6 +152,8 @@ public class FlowFragment extends android.support.v4.app.Fragment {
             @Override
             public void onClick(View view) {
                 if(player!=null){
+                    playbackPosition = 0;
+                    currentWindow = 0;
                     player.stop();
                 }
                 setViews(true);
@@ -264,6 +270,11 @@ public class FlowFragment extends android.support.v4.app.Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         Bundle extras = new Bundle();
@@ -272,6 +283,7 @@ public class FlowFragment extends android.support.v4.app.Fragment {
             extras.putLong("EXO_POS", player.getCurrentPosition());
             context.getIntent().putExtras(extras);
             player.stop();
+            releasePlayer();
         }catch (NullPointerException e){
 
         }

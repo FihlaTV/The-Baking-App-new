@@ -230,6 +230,7 @@ public class RecipeFragment extends android.support.v4.app.Fragment implements I
             Bundle extras = new Bundle();
 
             extras.putInt("THIS_ID", thisRecipeSteps.getId());
+            extras.putBoolean("CLICKED", true);
             ArrayList<Integer> allIDs = new ArrayList<>();
             ArrayList<String> allDesc = new ArrayList<>();
             ArrayList<String> allVid = new ArrayList<>();

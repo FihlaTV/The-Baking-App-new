@@ -65,10 +65,7 @@ public class StepActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step);
         ButterKnife.bind(this);
-        if(savedInstanceState!=null){
-            currentWindow = savedInstanceState.getInt("EXO_WIN");
-            playbackPosition = savedInstanceState.getLong("EXO_POS");
-        }
+
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         try {
@@ -111,14 +108,22 @@ public class StepActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        if(savedInstanceState!=null){
+            currentWindow = savedInstanceState.getInt("EXO_WIN");
+            playbackPosition = savedInstanceState.getLong("EXO_POS");
+            current = savedInstanceState.getInt("STEP_POS");
+            setViewsOnRotate();
+        }
+
         prev_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(player!=null){
+                    playbackPosition = 0;
+                    currentWindow = 0;
                     player.stop();
                 }
                 setViews(false);
-
             }
         });
 
@@ -126,6 +131,8 @@ public class StepActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(player!=null){
+                    playbackPosition = 0;
+                    currentWindow = 0;
                     player.stop();
                 }
                 setViews(true);
@@ -168,6 +175,37 @@ public class StepActivity extends AppCompatActivity {
             player.stop();
             player.release();
             player = null;
+        }
+    }
+
+    private void setViewsOnRotate(){
+        next_button.setVisibility(View.VISIBLE);
+        prev_button.setVisibility(View.VISIBLE);
+
+        if(current==(allIDs.size()-1)){
+            next_button.setVisibility(View.GONE);
+        }
+
+        if(current==0){
+            prev_button.setVisibility(View.GONE);
+        }
+
+        step_desc.setText(allDesc.get(current));
+
+        if (!allVid.get(current).equals("")) {
+            initializePlayer();
+            stepThumb.setVisibility(View.GONE);
+            videoView.setVisibility(View.VISIBLE);
+        }
+
+        else if (!allThumb.get(current).equals("")) {
+            stepThumb.setVisibility(View.VISIBLE);
+            Picasso.with(this).load(allThumb.get(current)).into(stepThumb);
+            videoView.setVisibility(View.GONE);
+        }
+        else {
+            videoView.setVisibility(View.GONE);
+            stepThumb.setVisibility(View.VISIBLE);
         }
     }
 
@@ -223,6 +261,7 @@ public class StepActivity extends AppCompatActivity {
         outState.putInt("EXO_WIN", currentWindow);
         outState.putLong("EXO_POS", playbackPosition);
         outState.putBoolean("EXO_PLAY", playWhenReady);
+        outState.putInt("STEP_POS", current);
         super.onSaveInstanceState(outState);
     }
 
@@ -234,6 +273,7 @@ public class StepActivity extends AppCompatActivity {
         currentWindow = savedInstanceState.getInt("EXO_WIN");
         playbackPosition = savedInstanceState.getLong("EXO_POS");
         playWhenReady = savedInstanceState.getBoolean("EXO_PLAY");
+        current = savedInstanceState.getInt("STEP_POS");
     }
 
     @Override
@@ -256,6 +296,7 @@ public class StepActivity extends AppCompatActivity {
         extras.putLong("EXO_POS", player.getCurrentPosition());
         getIntent().putExtras(extras);
         player.stop();
+        releasePlayer();
     }
 
     @Override

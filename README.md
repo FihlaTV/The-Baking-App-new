@@ -13,9 +13,13 @@ ExoPlayer retains state on rotation and after resuming from background. All Recy
 
 # LIBRARIES USED
 ButterKnife - Data Binding
+
 Picasso - Downloading images
+
 SugarORM - Managing DB
+
 ExoPlayer - Playing step videos
+
 Espresso - UI Testing
 
 
@@ -24,4 +28,5 @@ Espresso - UI Testing
 
 # Test devices:
 Nexus 5X (Android 8.0) - Emulator
+
 Nexus 7 (Android 8.0) - Emulator.

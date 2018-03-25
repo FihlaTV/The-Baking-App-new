@@ -189,7 +189,8 @@ public class FlowFragment extends android.support.v4.app.Fragment {
                 stepThumb.setVisibility(View.VISIBLE);
             }
         } catch (Exception e) {
-
+            next_button.setVisibility(View.GONE);
+            prev_button.setVisibility(View.GONE);
         }
     }
 

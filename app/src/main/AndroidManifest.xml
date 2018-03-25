@@ -33,7 +33,6 @@
         </activity>
         <activity
             android:name=".RecipeActivity"
-            android:configChanges="orientation|screenSize"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity" />
         <activity
@@ -53,7 +52,7 @@
 
         <activity android:name=".MasterFlowActivity"
             android:parentActivityName=".MainActivity"
-            android:configChanges="orientation|screenSize"/>
+            />
     </application>
 
 </manifest>

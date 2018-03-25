@@ -68,7 +68,7 @@ public class FlowFragment extends android.support.v4.app.Fragment {
     Boolean playWhenReady = true;
 
 
-    public FlowFragment(){
+    public FlowFragment() {
 
     }
 
@@ -83,10 +83,6 @@ public class FlowFragment extends android.support.v4.app.Fragment {
         context = getActivity();
         final View rootView = inflater.inflate(R.layout.fragment_flow, container, false);
         ButterKnife.bind(this, rootView);
-        if(savedInstanceState!=null){
-            currentWindow = savedInstanceState.getInt("EXO_WIN");
-            playbackPosition = savedInstanceState.getLong("EXO_POS");
-        }
 
         Bundle extras = this.getArguments();
         try {
@@ -99,46 +95,47 @@ public class FlowFragment extends android.support.v4.app.Fragment {
 
             step_desc.setText(allDesc.get(current));
 
-            if(current==(allIDs.size()-1)){
+            if (current == (allIDs.size() - 1)) {
                 next_button.setVisibility(GONE);
             }
 
-            if(current==0){
+            if (current == 0) {
                 prev_button.setVisibility(GONE);
             }
 
 
-            if(!allVid.get(current).equals("")){
+            if (!allVid.get(current).equals("")) {
                 initializePlayer();
                 stepThumb.setVisibility(GONE);
-            }
-
-            else if(!allThumb.get(current).equals("")){
+            } else if (!allThumb.get(current).equals("")) {
                 Picasso.with(context).load(allThumb.get(current)).into(stepThumb);
                 videoView.setVisibility(GONE);
-            }
-
-            else{
+            } else {
                 videoView.setVisibility(GONE);
             }
 
 
-        }
-        catch(NullPointerException e)
-        {
+        } catch (NullPointerException e) {
             videoView.setVisibility(GONE);
             stepThumb.setVisibility(GONE);
             prev_button.setVisibility(GONE);
             next_button.setVisibility(GONE);
             step_desc.setVisibility(GONE);
-            Log.e(LOG_TAG,"Null pointer in intent");
+            Log.e(LOG_TAG, "Null pointer in intent");
             e.printStackTrace();
+        }
+
+        if (savedInstanceState != null) {
+            currentWindow = savedInstanceState.getInt("EXO_WIN");
+            playbackPosition = savedInstanceState.getLong("EXO_POS");
+            current = savedInstanceState.getInt("STEP_POS");
+            setViewsOnRotate();
         }
 
         prev_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(player!=null){
+                if (player != null) {
                     playbackPosition = 0;
                     currentWindow = 0;
                     player.stop();
@@ -151,7 +148,7 @@ public class FlowFragment extends android.support.v4.app.Fragment {
         next_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(player!=null){
+                if (player != null) {
                     playbackPosition = 0;
                     currentWindow = 0;
                     player.stop();
@@ -163,8 +160,41 @@ public class FlowFragment extends android.support.v4.app.Fragment {
         return rootView;
 
     }
+
+    void setViewsOnRotate() {
+        next_button.setVisibility(View.VISIBLE);
+        prev_button.setVisibility(View.VISIBLE);
+        try {
+
+            if (current == (allIDs.size() - 1)) {
+                next_button.setVisibility(View.GONE);
+            }
+
+            if (current == 0) {
+                prev_button.setVisibility(View.GONE);
+            }
+
+            step_desc.setText(allDesc.get(current));
+
+            if (!allVid.get(current).equals("")) {
+                initializePlayer();
+                stepThumb.setVisibility(View.GONE);
+                videoView.setVisibility(View.VISIBLE);
+            } else if (!allThumb.get(current).equals("")) {
+                stepThumb.setVisibility(View.VISIBLE);
+                Picasso.with(context).load(allThumb.get(current)).into(stepThumb);
+                videoView.setVisibility(View.GONE);
+            } else {
+                videoView.setVisibility(View.GONE);
+                stepThumb.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
     private void initializePlayer() {
-        if(player!=null){
+        if (player != null) {
             player.stop();
             player = null;
         }
@@ -205,17 +235,17 @@ public class FlowFragment extends android.support.v4.app.Fragment {
         next_button.setVisibility(View.VISIBLE);
         prev_button.setVisibility(View.VISIBLE);
 
-        if(next)
+        if (next)
             current++;
 
-        if(!next)
+        if (!next)
             current--;
 
-        if(current==(allIDs.size()-1)){
+        if (current == (allIDs.size() - 1)) {
             next_button.setVisibility(GONE);
         }
 
-        if(current==0){
+        if (current == 0) {
             prev_button.setVisibility(GONE);
         }
 
@@ -225,19 +255,17 @@ public class FlowFragment extends android.support.v4.app.Fragment {
             initializePlayer();
             stepThumb.setVisibility(GONE);
             videoView.setVisibility(View.VISIBLE);
-        }
-
-        else if (!allThumb.get(current).equals("")) {
+        } else if (!allThumb.get(current).equals("")) {
             stepThumb.setVisibility(View.VISIBLE);
             Picasso.with(context).load(allThumb.get(current)).into(stepThumb);
             videoView.setVisibility(GONE);
-        }
-        else {
+        } else {
             videoView.setVisibility(GONE);
             stepThumb.setVisibility(View.VISIBLE);
         }
 
     }
+
     private void saveState() {
         if (player != null) {
             playbackPosition = player.getCurrentPosition();
@@ -252,6 +280,7 @@ public class FlowFragment extends android.support.v4.app.Fragment {
         outState.putInt("EXO_WIN", currentWindow);
         outState.putLong("EXO_POS", playbackPosition);
         outState.putBoolean("EXO_PLAY", playWhenReady);
+        outState.putInt("STEP_POS", current);
         super.onSaveInstanceState(outState);
     }
 
@@ -260,12 +289,12 @@ public class FlowFragment extends android.support.v4.app.Fragment {
         super.onResume();
         Bundle extras = context.getIntent().getExtras();
 
-        if(extras!=null){
+        if (extras != null) {
             currentWindow = extras.getInt("EXO_WIN");
             playbackPosition = extras.getLong("EXO_POS");
         }
-        if(allVid!=null)
-        initializePlayer();
+        if (allVid != null)
+            initializePlayer();
 
     }
 
@@ -284,7 +313,7 @@ public class FlowFragment extends android.support.v4.app.Fragment {
             context.getIntent().putExtras(extras);
             player.stop();
             releasePlayer();
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
 
         }
     }

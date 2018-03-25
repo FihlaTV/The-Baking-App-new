@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RemoteViews;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.example.android.thebakingapp.Utils.NetworkUtils;
@@ -49,6 +50,12 @@ public class RecipeFragment extends android.support.v4.app.Fragment implements I
 
     @BindView(R.id.floatingActionButton2)
     FloatingActionButton fab;
+
+    @BindView(R.id.scroll)
+    ScrollView scrollView;
+
+    private int xpos = 0;
+    private int ypos = 0;
 
     public RecipeFragment() {
 
@@ -93,6 +100,13 @@ public class RecipeFragment extends android.support.v4.app.Fragment implements I
             id = 1;
         }
         final String[] args = {"https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json", String.valueOf(id)};
+
+        if(savedInstanceState!=null){
+            int[] pos = savedInstanceState.getIntArray("ARTICLE_SCROLL_POSITION");
+            xpos = pos[0];
+            ypos = pos[1];
+        }
+
         new IngredientAsyncTask().execute(args);
         new StepsAsyncTask().execute(args);
 
@@ -146,6 +160,12 @@ public class RecipeFragment extends android.support.v4.app.Fragment implements I
         return rootView;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putIntArray("ARTICLE_SCROLL_POSITION",
+                new int[]{ scrollView.getScrollX(), scrollView.getScrollY()});
+    }
 
     private class IngredientAsyncTask extends AsyncTask<String, Void, ArrayList<RecipeIngredients>> {
 
@@ -213,6 +233,11 @@ public class RecipeFragment extends android.support.v4.app.Fragment implements I
                 stepAdapter.setRecipeSteps(recipeSteps);
                 recyclerViewSteps.setAdapter(stepAdapter);
                 all_steps = recipeSteps;
+                scrollView.post(new Runnable() {
+                    public void run() {
+                        scrollView.scrollTo(xpos, ypos);
+                    }
+                });
             } else return;
         }
     }
